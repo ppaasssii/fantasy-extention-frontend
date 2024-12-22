@@ -1,43 +1,27 @@
+import React, { useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import EventList from './components/EventList';
+import EventDetail from './components/EventDetail';
 import './App.css';
-import api from './api/axiosConfig';
-import { useState, useEffect } from 'react';
-import Layout from './compontents/Layout';
-import {Routes, Route} from 'react-router-dom';
-import Home from './compontents/home/Home';
-
 
 function App() {
-  const [userBets, setUserBet] = useState(null);
+  const [cart, setCart] = useState([]);
 
-  const getUserBets = async () => {
-    try
-    {
-      const response = await api.get();
-        console.log('Logging: App.js data from GET https://bets-fantasy-extention.europe-west1.firebasedatabase.app/', response.data);
-      setUserBet(response.data);
-    } catch (error)
-    {
-      console.log(error);
-    }
+  const addToCart = (bet) => {
+    setCart([...cart, bet]);
+  };
 
-  }
-
-    useEffect(() => {
-        getUserBets();
-    }, []);
-
-    return (
-        <div className="App">
-            <Routes>
-                <Route path="/" element={<Layout/>}>
-                    <Route path="/" element={<Home userBets={userBets}/>}>  </Route>
-
-                </Route>
-
-            </Routes>
-
-        </div>
-    );
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<EventList />} />
+          <Route path="/event/:eventID" element={<EventDetail addToCart={addToCart} />} />
+        </Routes>
+        <Cart cart={cart} setCart={setCart} />
+      </div>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
